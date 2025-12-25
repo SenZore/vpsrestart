@@ -1,83 +1,94 @@
 # VPS Auto Restart System
-A comprehensive auto-restart solution for Ubuntu 24 LTS VPS with Discord webhook notifications.
+
+A complete automatic restart setup for Ubuntu 24 LTS servers with optional Discord webhook notifications.
+
 ## Features
-- ✅ **Systemd-based** - Proper service management with `systemctl`
-- ⏰ **Configurable Schedule** - Set any restart time (default: 5:00 AM)
-- 🌏 **Timezone Support** - GMT+7 (Asia/Jakarta) default
-- 🔔 **Discord Notifications** - Rich embed messages for restart events
-- 🔄 **Smart Embed Updates** - Replaces old embeds to avoid spam
-- 📊 **Service Monitoring** - Reports service status after restart
-- 🎛️ **Easy Toggle** - Enable/disable without removing installation
-## Quick Install
-```bash
-# Download and run installer
-wget https://raw.githubusercontent.com/your-repo/vps-auto-restart/main/install.sh
+- Based on **systemd** for proper service management
+- Customizable restart schedule (default is 5:00 AM)
+- Supports timezone configuration (default: Asia/Jakarta, GMT+7)
+- Sends updates to Discord through webhook embeds
+- Reuses a single embed message to avoid spam
+- Reports system and service status after restart
+- Can be turned on or off anytime without uninstalling
+
+## Quick Installation
+```
+# Download and run the installer
+wget https://raw.githubusercontent.com/SenZore/vpsrestart/main/install.sh
 chmod +x install.sh
 sudo ./install.sh
 ```
-Or manually upload files:
-```bash
-# Upload to VPS
+
+Or upload it manually:
+```
+# Upload the installer
 scp install.sh user@your-vps:/home/user/
-# Run installer
+# Run the installer
 sudo ./install.sh
 ```
+
 ## Interactive Setup
-The installer will prompt you for:
-1. **Timezone** - Default: Asia/Jakarta (GMT+7)
-2. **Restart Time** - Default: 05:00 (5 AM)
-3. **Discord Webhook** - Optional notifications
+During installation, you’ll be asked for:
+1. Timezone (default: Asia/Jakarta)
+2. Restart time (default: 05:00 AM)
+3. Discord webhook URL (optional)
+
 ## Management Commands
-After installation, use `varctl` to manage the service:
-```bash
-varctl status       # View current status and next restart time
-varctl enable       # Enable auto-restart
-varctl disable      # Disable auto-restart (timer still runs but skips)
-varctl set-time     # Change restart time
-varctl set-webhook  # Configure Discord webhook
-varctl test         # Send test Discord notification
-varctl logs         # View recent activity logs
-varctl restart-now  # Force immediate restart
-varctl uninstall    # Remove the entire system
+After setup, use `varctl` to manage or check the service:
 ```
+varctl status       # View service status and next restart time
+varctl enable       # Turn on automatic restart
+varctl disable      # Turn off automatic restart (timer still runs)
+varctl set-time     # Set a new restart time
+varctl set-webhook  # Configure or change Discord webhook
+varctl test         # Send a test message to Discord
+varctl logs         # Check recent logs
+varctl restart-now  # Restart the server immediately
+varctl uninstall    # Remove everything
+```
+
 ## Discord Notifications
-### When Server Restarts
-![Restart Notification](https://via.placeholder.com/400x200/FFA500/fff?text=🔄+Server+Restarting)
-Shows:
-- Server hostname
-- Current time
-- Uptime before restart
-- Next scheduled restart time
-### When Server Comes Online
-![Online Notification](https://via.placeholder.com/400x200/57F287/fff?text=✅+Server+Online)
-Shows:
-- Server hostname
-- Boot time
-- Current uptime
+**When the server restarts**, a message shows:
+- Hostname  
+- Current time  
+- Uptime before restart  
 - Next scheduled restart
+
+**After the server is back online**, another message shows:
+- Hostname  
+- Boot time  
+- Current uptime  
+- Next scheduled restart  
 - Service status (SSH, Nginx, Docker, etc.)
-### Spam Prevention
-The system automatically deletes the previous notification before posting a new one, keeping your Discord channel clean.
+
+The script automatically deletes the previous embed before sending a new one, keeping your log channel clean.
+
 ## File Locations
-| File | Location |
-|------|----------|
-| Config | `/opt/vps-auto-restart/config.env` |
+| File | Path |
+|------|------|
+| Configuration | `/opt/vps-auto-restart/config.env` |
 | Scripts | `/opt/vps-auto-restart/` |
 | Logs | `/var/log/vps-auto-restart.log` |
-| Service | `/etc/systemd/system/vps-auto-restart.service` |
-| Timer | `/etc/systemd/system/vps-auto-restart.timer` |
-## Systemd Services
-```bash
+| Systemd Service | `/etc/systemd/system/vps-auto-restart.service` |
+| Systemd Timer | `/etc/systemd/system/vps-auto-restart.timer` |
+
+## Systemd Commands
+```
 # Check timer status
 systemctl status vps-auto-restart.timer
+
 # View next scheduled restart
 systemctl list-timers vps-auto-restart.timer
-# Manual service control
-sudo systemctl start/stop/restart vps-auto-restart.timer
+
+# Manual control
+sudo systemctl start vps-auto-restart.timer
+sudo systemctl stop vps-auto-restart.timer
+sudo systemctl restart vps-auto-restart.timer
 ```
-## Configuration File
+
+## Configuration
 Edit `/opt/vps-auto-restart/config.env`:
-```bash
+```
 TIMEZONE="Asia/Jakarta"
 RESTART_HOUR="05"
 RESTART_MINUTE="00"
@@ -86,19 +97,25 @@ DISCORD_WEBHOOK="https://discord.com/api/webhooks/xxx/yyy"
 DISCORD_MESSAGE_ID=""
 ENABLED="true"
 ```
+
 ## Requirements
-- Ubuntu 24 LTS (or compatible)
-- Root access (sudo)
-- `curl` and `jq` (auto-installed)
-- Discord webhook URL (optional)
+- Ubuntu 24 LTS or compatible  
+- Root access (sudo)  
+- `curl` and `jq` (auto-installed)  
+- Optional Discord webhook URL  
+
 ## Uninstall
-```bash
+```
 sudo varctl uninstall
 ```
-This removes:
-- All systemd services and timers
-- Configuration files
-- Scripts from `/opt/vps-auto-restart/`
-- The `varctl` command
+
+This will remove:
+- The systemd service and timer  
+- All configuration and script files  
+- The `varctl` command  
+
 ## License
-MIT License - Free to use and modify.
+MIT License — free to use, edit, and distribute.
+```
+
+
